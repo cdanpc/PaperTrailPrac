@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - PaperTrail{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-user-circle fa-5x text-primary"></i>
+                </div>
+                <h4>{{ user.get_full_name }}</h4>
+                <p class="text-muted">@{{ user.username }}</p>
+                <span class="badge bg-{% if user.is_admin %}danger{% else %}primary{% endif %}">
+                    {{ user.get_role_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user me-2"></i>Profile Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>First Name:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ user.first_name }}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Last Name:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ user.last_name }}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ user.email }}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Username:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ user.username }}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Role:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <span class="badge bg-{% if user.is_admin %}danger{% else %}primary{% endif %}">
+                            {{ user.get_role_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Member Since:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ user.date_joined|date:"F d, Y" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Activity Summary -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Activity Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="icon">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <div class="number">{{ user.uploaded_resources.count }}</div>
+                            <div class="label">Resources Uploaded</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="number">{{ user.reviews.count }}</div>
+                            <div class="label">Reviews Written</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="icon">
+                                <i class="fas fa-bookmark"></i>
+                            </div>
+                            <div class="number">{{ user.bookmarks.count }}</div>
+                            <div class="label">Bookmarks</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div class="number">{{ user.created_quizzes.count }}</div>
+                            <div class="label">Quizzes Created</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

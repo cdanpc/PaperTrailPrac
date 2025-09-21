@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Items - {{ flashcard.title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'flashcards:flashcard_list' %}">Flashcards</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'flashcards:flashcard_detail' flashcard.pk %}">{{ flashcard.title }}</a></li>
+                <li class="breadcrumb-item active">Add Items</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-plus me-2"></i>Add Item to: {{ flashcard.title }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.front_text.id_for_label }}" class="form-label">Front Text *</label>
+                        {{ form.front_text }}
+                        <div class="form-text">The question or term (what you see first)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.back_text.id_for_label }}" class="form-label">Back Text *</label>
+                        {{ form.back_text }}
+                        <div class="form-text">The answer or definition (what you reveal)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.order.id_for_label }}" class="form-label">Order</label>
+                        {{ form.order }}
+                        <div class="form-text">Order in the flashcard set (optional)</div>
+                    </div>
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <p class="mb-1">{{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'flashcards:flashcard_detail' flashcard.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Flashcard Set
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Flashcard Items ({{ items.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if items %}
+                    {% for item in items %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <strong>Front:</strong> {{ item.front_text|truncatewords:5 }}
+                        <br>
+                        <strong>Back:</strong> {{ item.back_text|truncatewords:5 }}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No items added yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

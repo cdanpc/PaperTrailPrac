@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Flashcards - PaperTrail{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-0">
+            <i class="fas fa-layer-group me-3"></i>My Flashcards
+        </h1>
+        <p class="text-muted">Flashcard sets you've created</p>
+    </div>
+</div>
+
+<!-- Flashcards Grid -->
+<div class="row">
+    {% for flashcard in flashcards %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-start mb-3">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-cards-blank fa-2x text-info"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="card-title mb-1">
+                            <a href="{% url 'flashcards:flashcard_detail' flashcard.pk %}" class="text-decoration-none">
+                                {{ flashcard.title|truncatewords:8 }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">{{ flashcard.subject }}</small>
+                    </div>
+                </div>
+                
+                <p class="card-text">{{ flashcard.description|truncatewords:15 }}</p>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <small class="text-muted">
+                        <i class="fas fa-layer-group me-1"></i>{{ flashcard.items.count }} cards
+                    </small>
+                    <small class="text-muted">{{ flashcard.created_at|date:"M d" }}</small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'flashcards:flashcard_detail' flashcard.pk %}" class="btn btn-sm btn-outline-info">
+                        View Details
+                    </a>
+                    <a href="{% url 'flashcards:add_items' flashcard.pk %}" class="btn btn-sm btn-outline-primary">
+                        Add Cards
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="fas fa-layer-group fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No flashcard sets created yet</h4>
+            <p class="text-muted">Start creating flashcard sets to help with memorization!</p>
+            <a href="{% url 'flashcards:create_flashcard' %}" class="btn btn-info">
+                <i class="fas fa-plus me-2"></i>Create Your First Flashcard Set
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav aria-label="My flashcards pagination">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+        {% endif %}
+        
+        <li class="page-item active">
+            <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

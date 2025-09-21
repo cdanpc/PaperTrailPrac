@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ quiz.title }} - PaperTrail{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'quizzes:quiz_list' %}">Quizzes</a></li>
+                <li class="breadcrumb-item active">{{ quiz.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">{{ quiz.title }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Subject:</strong> {{ quiz.subject }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Questions:</strong> {{ questions.count }}
+                    </div>
+                </div>
+                
+                {% if quiz.description %}
+                <div class="mb-3">
+                    <strong>Description:</strong>
+                    <p class="mt-2">{{ quiz.description }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Created by:</strong> {{ quiz.created_by.get_full_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Date:</strong> {{ quiz.created_at|date:"F d, Y" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Questions Preview -->
+        {% if questions %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Questions Preview</h5>
+            </div>
+            <div class="card-body">
+                {% for question in questions %}
+                <div class="border-bottom pb-3 mb-3">
+                    <h6><strong>Q{{ forloop.counter }}:</strong> {{ question.question }}</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>A)</strong> {{ question.option_a }}</p>
+                            <p class="mb-1"><strong>B)</strong> {{ question.option_b }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>C)</strong> {{ question.option_c }}</p>
+                            <p class="mb-1"><strong>D)</strong> {{ question.option_d }}</p>
+                        </div>
+                    </div>
+                    <p class="text-success mb-0"><strong>Correct Answer:</strong> {{ question.correct_answer }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Actions</h5>
+            </div>
+            <div class="card-body">
+                {% if questions.count > 0 %}
+                    <a href="{% url 'quizzes:take_quiz' quiz.pk %}" class="btn btn-success w-100 mb-2">
+                        <i class="fas fa-play me-2"></i>Take Quiz
+                    </a>
+                {% else %}
+                    <p class="text-muted">No questions available yet.</p>
+                {% endif %}
+                
+                {% if quiz.created_by == user %}
+                    <a href="{% url 'quizzes:add_questions' quiz.pk %}" class="btn btn-primary w-100 mb-2">
+                        <i class="fas fa-plus me-2"></i>Add Questions
+                    </a>
+                {% endif %}
+                
+                <a href="{% url 'quizzes:quiz_list' %}" class="btn btn-secondary w-100">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Quizzes
+                </a>
+            </div>
+        </div>
+        
+        <!-- Recent Attempts -->
+        {% if user_attempts %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Your Recent Attempts</h5>
+            </div>
+            <div class="card-body">
+                {% for attempt in user_attempts %}
+                <div class="border-bottom pb-2 mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span><strong>{{ attempt.score }}/{{ attempt.total_questions }}</strong></span>
+                        <small class="text-muted">{{ attempt.completed_at|date:"M d" }}</small>
+                    </div>
+                    <div class="progress mt-1" style="height: 5px;">
+                        <div class="progress-bar" style="width: {% widthratio attempt.score attempt.total_questions 100 %}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

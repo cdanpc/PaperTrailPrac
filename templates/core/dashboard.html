@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - PaperTrail{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-0">
+            <i class="fas fa-tachometer-alt me-3"></i>Dashboard
+        </h1>
+        <p class="text-muted">Welcome back, {{ user.first_name }}!</p>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{% url 'resources:upload_resource' %}" class="btn btn-primary w-100">
+                            <i class="fas fa-upload me-2"></i>Upload Resource
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'quizzes:create_quiz' %}" class="btn btn-success w-100">
+                            <i class="fas fa-plus me-2"></i>Create Quiz
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'flashcards:create_flashcard' %}" class="btn btn-info w-100">
+                            <i class="fas fa-plus me-2"></i>Create Flashcards
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'resources:resource_list' %}" class="btn btn-secondary w-100">
+                            <i class="fas fa-search me-2"></i>Browse Resources
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Welcome Message -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>Welcome to PaperTrail!</h4>
+                <p class="text-muted">Your study hub is ready. Start by uploading resources, creating quizzes, or browsing study materials.</p>
+                
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                                <h5>Study Resources</h5>
+                                <p>Upload and share study materials with your peers.</p>
+                                <a href="{% url 'resources:resource_list' %}" class="btn btn-outline-primary">Browse Resources</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <i class="fas fa-question-circle fa-3x text-success mb-3"></i>
+                                <h5>Interactive Quizzes</h5>
+                                <p>Create and take quizzes to test your knowledge.</p>
+                                <a href="{% url 'quizzes:quiz_list' %}" class="btn btn-outline-success">Take Quizzes</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <i class="fas fa-layer-group fa-3x text-info mb-3"></i>
+                                <h5>Digital Flashcards</h5>
+                                <p>Build and study with digital flashcards.</p>
+                                <a href="{% url 'flashcards:flashcard_list' %}" class="btn btn-outline-info">Study Flashcards</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

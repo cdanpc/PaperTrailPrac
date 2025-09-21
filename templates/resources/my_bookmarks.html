@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Bookmarks - PaperTrail{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-0">
+            <i class="fas fa-bookmark me-3"></i>My Bookmarks
+        </h1>
+        <p class="text-muted">Your saved study resources</p>
+    </div>
+</div>
+
+<!-- Bookmarks Grid -->
+<div class="row">
+    {% for bookmark in bookmarks %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card resource-card">
+            <div class="card-body">
+                <div class="d-flex align-items-start mb-3">
+                    <div class="flex-shrink-0">
+                        {% if bookmark.resource.file_type == 'pdf' %}
+                            <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                        {% elif bookmark.resource.file_type == 'ppt' %}
+                            <i class="fas fa-file-powerpoint fa-2x text-warning"></i>
+                        {% elif bookmark.resource.file_type == 'docx' %}
+                            <i class="fas fa-file-word fa-2x text-primary"></i>
+                        {% elif bookmark.resource.file_type == 'ebook' %}
+                            <i class="fas fa-book fa-2x text-success"></i>
+                        {% else %}
+                            <i class="fas fa-file-alt fa-2x text-secondary"></i>
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="card-title mb-1">
+                            <a href="{% url 'resources:resource_detail' bookmark.resource.pk %}" class="text-decoration-none">
+                                {{ bookmark.resource.title|truncatewords:8 }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">{{ bookmark.resource.subject }}</small>
+                    </div>
+                </div>
+                
+                <p class="card-text">{{ bookmark.resource.description|truncatewords:15 }}</p>
+                
+                <div class="tags mb-3">
+                    {% for tag in bookmark.resource.get_tags_list %}
+                        <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="rating">
+                        {% if bookmark.resource.avg_rating %}
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= bookmark.resource.avg_rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <small class="text-muted ms-1">({{ bookmark.resource.reviews.count }})</small>
+                        {% else %}
+                            <small class="text-muted">No ratings yet</small>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">{{ bookmark.created_at|date:"M d" }}</small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">
+                        <i class="fas fa-user me-1"></i>{{ bookmark.resource.uploaded_by.get_full_name }}
+                    </small>
+                    <div>
+                        <a href="{% url 'resources:resource_detail' bookmark.resource.pk %}" class="btn btn-sm btn-outline-primary me-2">
+                            View Details
+                        </a>
+                        <a href="{% url 'resources:bookmark_resource' bookmark.resource.pk %}" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-bookmark"></i> Remove
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="fas fa-bookmark fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No bookmarks yet</h4>
+            <p class="text-muted">Start bookmarking resources to save them for later!</p>
+            <a href="{% url 'resources:resource_list' %}" class="btn btn-primary">
+                <i class="fas fa-search me-2"></i>Browse Resources
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav aria-label="Bookmarks pagination">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+        {% endif %}
+        
+        <li class="page-item active">
+            <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

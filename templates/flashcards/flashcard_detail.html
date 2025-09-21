@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ flashcard.title }} - PaperTrail{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'flashcards:flashcard_list' %}">Flashcards</a></li>
+                <li class="breadcrumb-item active">{{ flashcard.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">{{ flashcard.title }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Subject:</strong> {{ flashcard.subject }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Cards:</strong> {{ items.count }}
+                    </div>
+                </div>
+                
+                {% if flashcard.description %}
+                <div class="mb-3">
+                    <strong>Description:</strong>
+                    <p class="mt-2">{{ flashcard.description }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Created by:</strong> {{ flashcard.created_by.get_full_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Date:</strong> {{ flashcard.created_at|date:"F d, Y" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Items Preview -->
+        {% if items %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Flashcard Items Preview</h5>
+            </div>
+            <div class="card-body">
+                {% for item in items %}
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><strong>Front:</strong></h6>
+                            <p>{{ item.front_text }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><strong>Back:</strong></h6>
+                            <p>{{ item.back_text }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Actions</h5>
+            </div>
+            <div class="card-body">
+                {% if items.count > 0 %}
+                    <a href="{% url 'flashcards:study_flashcard' flashcard.pk %}" class="btn btn-info w-100 mb-2">
+                        <i class="fas fa-play me-2"></i>Study Now
+                    </a>
+                {% else %}
+                    <p class="text-muted">No cards available yet.</p>
+                {% endif %}
+                
+                {% if flashcard.created_by == user %}
+                    <a href="{% url 'flashcards:add_items' flashcard.pk %}" class="btn btn-primary w-100 mb-2">
+                        <i class="fas fa-plus me-2"></i>Add Cards
+                    </a>
+                {% endif %}
+                
+                <a href="{% url 'flashcards:flashcard_list' %}" class="btn btn-secondary w-100">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Flashcards
+                </a>
+            </div>
+        </div>
+        
+        <!-- Recent Study Sessions -->
+        {% if user_sessions %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Your Recent Study Sessions</h5>
+            </div>
+            <div class="card-body">
+                {% for session in user_sessions %}
+                <div class="border-bottom pb-2 mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span><strong>{{ session.correct_answers }}/{{ session.items_studied }}</strong></span>
+                        <small class="text-muted">{{ session.completed_at|date:"M d" }}</small>
+                    </div>
+                    <div class="progress mt-1" style="height: 5px;">
+                        <div class="progress-bar" style="width: {% widthratio session.correct_answers session.items_studied 100 %}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
